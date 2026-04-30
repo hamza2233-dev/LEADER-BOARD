@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alixo BPO | Full Performance Tracker</title>
+    <title>Alixo BPO | Precision Payroll Tracker</title>
     <style>
         :root {
             --bg-dark: #0d1117;
@@ -40,9 +40,9 @@
         .bg-pend { background: rgba(210, 153, 34, 0.15); color: var(--yellow); border-color: var(--yellow); }
         .bg-unapp { background: rgba(248, 81, 73, 0.15); color: var(--red); border-color: var(--red); }
         
-        .total-highlight { color: var(--blue); }
         .salary-highlight { color: var(--green); font-size: 1.2rem; font-family: 'Courier New', monospace; }
-        .target-needed { font-size: 0.7rem; color: #8b949e; display: block; margin-top: 4px; font-family: sans-serif; }
+        .target-needed { font-size: 0.75rem; color: #8b949e; display: block; margin-top: 4px; font-family: sans-serif; font-weight: 400; }
+        .total-highlight { color: var(--blue); }
         .avg-highlight { color: var(--purple); }
     </style>
 </head>
@@ -51,14 +51,14 @@
 <div class="container">
     <header>
         <h1 class="company-name">Alixo BPO</h1>
-        <div id="date-info" class="dashboard-title">Live Performance Dashboard</div>
+        <div id="date-info" class="dashboard-title">Live Payroll Tracker</div>
     </header>
 
     <div class="stats-bar">
         <div class="stat-card"><span class="dashboard-title">TOTAL LEADS</span><span id="center-total" class="stat-number" style="color:var(--blue)">0</span></div>
-        <div class="stat-card"><span class="dashboard-title">TOTAL APPROVED</span><span id="center-approved" class="stat-number" style="color:var(--green)">0</span></div>
-        <div class="stat-card"><span class="dashboard-title">TOTAL PENDING</span><span id="center-pending" class="stat-number" style="color:var(--yellow)">0</span></div>
-        <div class="stat-card"><span class="dashboard-title">TOTAL REJECTED</span><span id="center-unapproved" class="stat-number" style="color:var(--red)">0</span></div>
+        <div class="stat-card"><span class="dashboard-title">APPROVED</span><span id="center-approved" class="stat-number" style="color:var(--green)">0</span></div>
+        <div class="stat-card"><span class="dashboard-title">PENDING</span><span id="center-pending" class="stat-number" style="color:var(--yellow)">0</span></div>
+        <div class="stat-card"><span class="dashboard-title">REJECTED</span><span id="center-unapproved" class="stat-number" style="color:var(--red)">0</span></div>
         <div class="stat-card"><span class="dashboard-title">MTD PAYROLL</span><span id="center-payroll" class="stat-number" style="color:var(--green)">Rs 0</span></div>
     </div>
 
@@ -93,20 +93,20 @@
         return count > 0 ? count : 1; 
     }
 
+    // FINALIZED SALARY LOGIC
     function calculateSalary(approvedLeads) {
         if (approvedLeads === 0) return 0;
         if (approvedLeads < 30) {
-            return approvedLeads * 800;
+            return approvedLeads * 800; // Boost for lower volume
         } else {
-            let base = 25000;
-            let increments = Math.floor((approvedLeads - 30) / 10);
-            return base + (increments * 5000);
+            // Base 25k for hitting 30, then 500 for each lead after
+            let extraLeads = approvedLeads - 30;
+            return 25000 + (extraLeads * 500);
         }
     }
 
     const workDays = getWorkingDaysPassed();
-    const today = new Date();
-    document.getElementById('date-info').innerText = `${today.toLocaleString('default', { month: 'long' })} | ${workDays} Working Days Tracked`;
+    document.getElementById('date-info').innerText = `Active Performance Tracking | ${workDays} Working Days This Month`;
 
     async function refreshLeaderboard() {
         try {
@@ -142,10 +142,9 @@
                 
                 let targetText = "";
                 if (agent.app < 30) {
-                    targetText = `<span class="target-needed">${30 - agent.app} more to hit Rs 25,000</span>`;
+                    targetText = `<span class="target-needed">${30 - agent.app} more leads to reach 25,000</span>`;
                 } else {
-                    let nextMilestone = 30 + (Math.floor((agent.app - 30) / 10) + 1) * 10;
-                    targetText = `<span class="target-needed" style="color:var(--blue)">${nextMilestone - agent.app} more to Rs 5,000 bonus</span>`;
+                    targetText = `<span class="target-needed" style="color:var(--blue)">+500 PKR for your next approved lead</span>`;
                 }
 
                 tableContent += `
@@ -174,7 +173,7 @@
     }
 
     refreshLeaderboard();
-    setInterval(refreshLeaderboard, 15000); // 15-second auto-refresh
+    setInterval(refreshLeaderboard, 15000);
 </script>
 </body>
 </html>
