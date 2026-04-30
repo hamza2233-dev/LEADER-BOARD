@@ -1,92 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>BPO Performance Live</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPO Agent Performance Leaderboard</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0b0e14; color: white; text-align: center; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: #161b22; padding: 30px; border-radius: 12px; border: 1px solid #30363d; }
-        h1 { color: #58a6ff; text-transform: uppercase; margin-bottom: 30px; }
+        /* Modern Dark Theme for Call Center Floor */
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #0d1117; color: #c9d1d9; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+        h1 { text-align: center; color: #58a6ff; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 30px; font-size: 2rem; }
         
-        /* Leaderboard Table Styles */
-        .board { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { padding: 15px; background: #0d1117; color: #8b949e; text-transform: uppercase; font-size: 0.8rem; }
-        td { padding: 15px; border-bottom: 1px solid #30363d; font-size: 1.1rem; font-weight: 500; }
+        /* Table Layout */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        th { padding: 12px; color: #8b949e; text-transform: uppercase; font-size: 0.85rem; text-align: center; border-bottom: 1px solid #30363d; }
+        td { padding: 16px; text-align: center; font-size: 1.1rem; font-weight: 500; }
 
-        /* Status Colors */
-        .row-approved { background: rgba(46, 160, 67, 0.15); color: #3fb950; border-left: 5px solid #3fb950; }
-        .row-not-approved { background: rgba(248, 81, 73, 0.15); color: #f85149; border-left: 5px solid #f85149; }
-        
-        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
-        .badge-approved { background: #238636; color: white; }
-        .badge-not-approved { background: #da3633; color: white; }
+        /* Status Row Styling */
+        .row-approved { background: rgba(46, 160, 67, 0.1); color: #3fb950; }
+        .row-approved td:first-child { border-radius: 8px 0 0 8px; border-left: 4px solid #3fb950; }
+        .row-approved td:last-child { border-radius: 0 8px 8px 0; }
+
+        .row-not-approved { background: rgba(248, 81, 73, 0.1); color: #f85149; }
+        .row-not-approved td:first-child { border-radius: 8px 0 0 8px; border-left: 4px solid #f85149; }
+        .row-not-approved td:last-child { border-radius: 0 8px 8px 0; }
+
+        /* Badges */
+        .badge { padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; display: inline-block; }
+        .badge-approved { background: #238636; color: #ffffff; }
+        .badge-not-approved { background: #da3633; color: #ffffff; }
+
+        .rank-circle { background: #30363d; width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: #fff; font-weight: bold; }
+        .agent-name { text-align: left; padding-left: 40px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Live Agent Performance</h1>
-        <table class="board">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Agent Name</th>
-                    <th>Leads</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboard-data">
-                <!-- Data will load here -->
-            </tbody>
-        </table>
-    </div>
+<div class="container">
+    <h1>Live Agent Performance</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th class="agent-name">Agent Name</th>
+                <th>Leads</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="data-table">
+            <!-- Data loads here -->
+        </tbody>
+    </table>
+</div>
 
-    <script>
-        // PASTE YOUR GOOGLE SHEET CSV LINK HERE
-        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNUob6RgZZc4RWJfazbmerMCwcsZtJYulHpZk1FQPMm9rrnUKmTsTLzsXLaRGuEkDq_fuqIDGcAGAj/pubhtml";
+<script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNUob6RgZZc4RWJfazbmerMCwcsZtJYulHpZk1FQPMm9rrnUKmTsTLzsXLaRGuEkDq_fuqIDGcAGAj/pub?output=csv";
 
-        async function loadData() {
-            try {
-                const response = await fetch(csvUrl);
-                const data = await response.text();
-                const rows = data.split('\n').slice(1); // Skip header row
-                
-                let html = '';
-                let agents = rows.map(row => {
-                    const col = row.split(',');
-                    return { 
-                        name: col[0], 
-                        leads: parseInt(col[1]) || 0, 
-                        status: (col[2] || "").trim() 
-                    };
-                });
+    async function fetchPerformance() {
+        try {
+            const response = await fetch(csvUrl);
+            const text = await response.text();
+            
+            // Clean the data: remove empty lines and filter out any Google CSS junk
+            const lines = text.split('\n').filter(l => l.trim().length > 0 && !l.includes('{'));
+            const dataRows = lines.slice(1); // Remove header
 
-                // Sort by most leads
-                agents.sort((a, b) => b.leads - a.leads);
+            let agents = dataRows.map(row => {
+                const parts = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                return {
+                    name: (parts[0] || "Unknown").replace(/"/g, '').trim(),
+                    leads: parseInt(parts[1]) || 0,
+                    status: (parts[2] || "Not Approved").replace(/"/g, '').trim()
+                };
+            });
 
-                agents.forEach((agent, index) => {
-                    // Check status for coloring
-                    const isApproved = agent.status.toLowerCase() === "approved";
-                    const rowClass = isApproved ? "row-approved" : "row-not-approved";
-                    const badgeClass = isApproved ? "badge-approved" : "badge-not-approved";
+            // Rank by performance (highest leads first)
+            agents.sort((a, b) => b.leads - a.leads);
 
-                    html += `
-                        <tr class="${rowClass}">
-                            <td>#${index + 1}</td>
-                            <td>${agent.name}</td>
-                            <td>${agent.leads}</td>
-                            <td><span class="status-badge ${badgeClass}">${agent.status}</span></td>
-                        </tr>`;
-                });
+            let tableHtml = '';
+            agents.forEach((agent, index) => {
+                const isApproved = agent.status.toLowerCase() === 'approved';
+                const rowStyle = isApproved ? 'row-approved' : 'row-not-approved';
+                const badgeStyle = isApproved ? 'badge-approved' : 'badge-not-approved';
 
-                document.getElementById('leaderboard-data').innerHTML = html;
-            } catch (error) {
-                console.error("Error loading CSV:", error);
-            }
+                tableHtml += `
+                    <tr class="${rowStyle}">
+                        <td><div class="rank-circle">${index + 1}</div></td>
+                        <td class="agent-name">${agent.name}</td>
+                        <td><strong>${agent.leads}</strong></td>
+                        <td><span class="badge ${badgeStyle}">${agent.status}</span></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('data-table').innerHTML = tableHtml;
+
+        } catch (err) {
+            console.error("Fetch error:", err);
+            document.getElementById('data-table').innerHTML = "<tr><td colspan='4'>Updating data...</td></tr>";
         }
+    }
 
-        // Refresh every 20 seconds for the call center floor
-        loadData();
-        setInterval(loadData, 20000);
-    </script>
+    // Refresh data every 15 seconds to keep the floor updated
+    fetchPerformance();
+    setInterval(fetchPerformance, 15000);
+</script>
+
 </body>
 </html>
