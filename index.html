@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Alixo BPO | Time-Aware Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alixo BPO | Analytics Dashboard</title>
     <style>
         :root {
             --bg-dark: #0d1117;
@@ -13,105 +13,63 @@
             --green: #3fb950;
             --red: #f85149;
             --yellow: #d29922;
-            --purple: #bc8cff;
-            --gold: #f1c40f;
             --text-main: #c9d1d9;
         }
 
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: var(--bg-dark); 
-            color: var(--text-main); 
-            margin: 0; 
-            padding: 10px;
-        }
-
-        .container { 
-            width: 100%; 
-            max-width: 1400px; 
-            margin: auto; 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            border-radius: 16px; 
-            padding: 20px; 
-            box-sizing: border-box;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-dark); color: var(--text-main); margin: 0; padding: 15px; }
+        .container { max-width: 1300px; margin: auto; }
         
-        header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .company-name { color: var(--blue); font-size: 2rem; font-weight: 800; text-transform: uppercase; margin: 0; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .company-name { color: var(--blue); font-size: 2.2rem; font-weight: 800; margin: 0; }
 
-        /* Awards Section */
-        .awards-container { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 25px; }
-        @media (min-width: 768px) { .awards-container { grid-template-columns: 1fr 1fr; } }
+        /* Filter Controls */
+        .controls { display: flex; gap: 10px; flex-wrap: wrap; background: var(--card-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); }
+        select, input { background: #0d1117; color: white; border: 1px solid var(--border); padding: 8px; border-radius: 5px; outline: none; }
+        .custom-range { display: none; gap: 10px; align-items: center; }
 
-        .award-card { 
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid var(--gold); 
-            border-radius: 12px; 
-            padding: 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px;
-        }
+        /* Stats Grid */
+        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .stat-label { font-size: 0.7rem; color: #8b949e; text-transform: uppercase; display: block; }
+        .stat-number { font-size: 1.4rem; font-weight: bold; margin-top: 5px; display: block; }
 
-        .award-info h3 { margin: 0; font-size: 0.8rem; color: var(--gold); text-transform: uppercase; }
-        .award-info p { margin: 5px 0 0; font-size: 1.4rem; font-weight: 800; color: #fff; }
-
-        /* Stats Bar */
-        .stats-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
-        @media (min-width: 900px) { .stats-bar { grid-template-columns: repeat(5, 1fr); } }
-
-        .stat-card { background: rgba(48, 54, 61, 0.2); padding: 12px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
-        .stat-label { font-size: 0.7rem; color: #8b949e; text-transform: uppercase; }
-        .stat-number { font-size: 1.3rem; font-weight: bold; display: block; margin-top: 5px; }
-
-        /* Responsive Table */
-        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; min-width: 850px; }
-        th { padding: 12px; color: #8b949e; text-transform: uppercase; font-size: 0.75rem; }
-        td { padding: 15px; text-align: center; font-size: 1rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .row-item { background: rgba(255,255,255,0.02); }
-        .agent-name { text-align: left; padding-left: 20px; color: #fff; font-weight: 700; }
-        .salary-highlight { color: var(--green); font-weight: 800; font-family: monospace; }
-        .target-needed { font-size: 0.75rem; color: #8b949e; display: block; font-weight: normal; }
-
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; border: 1px solid transparent; }
-        .bg-app { background: rgba(46, 160, 67, 0.1); color: var(--green); border-color: var(--green); }
+        /* Table */
+        .table-wrapper { width: 100%; overflow-x: auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { padding: 15px; color: #8b949e; text-transform: uppercase; font-size: 0.75rem; border-bottom: 1px solid var(--border); }
+        td { padding: 15px; text-align: center; border-bottom: 1px solid var(--border); }
+        .agent-name { text-align: left; padding-left: 20px; color: #fff; font-weight: bold; }
+        .salary { color: var(--green); font-weight: bold; font-family: monospace; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1 class="company-name">Alixo BPO</h1>
-        <div id="live-indicator" style="color: var(--green); font-size: 0.8rem; margin-top: 5px;">● Live Tracking Active</div>
+        <h1 class="company-name">ALIXO BPO</h1>
+        <div class="controls">
+            <select id="timeframe" onchange="handleTimeframeChange()">
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="this-week">This Week</option>
+                <option value="last-week">Last Week</option>
+                <option value="this-month" selected>This Month (MTD)</option>
+                <option value="last-month">Last Month</option>
+                <option value="custom">Custom Range</option>
+            </select>
+            <div id="custom-inputs" class="custom-range">
+                <input type="date" id="start-date" onchange="updateDashboard()">
+                <input type="date" id="end-date" onchange="updateDashboard()">
+            </div>
+        </div>
     </header>
 
-    <div class="awards-container">
-        <div class="award-card">
-            <div class="award-icon" style="font-size: 2rem;">🏆</div>
-            <div class="award-info">
-                <h3>Agent of the Month</h3>
-                <p id="top-agent-month">...</p>
-            </div>
-        </div>
-        <div class="award-card" style="border-color: var(--blue);">
-            <div class="award-icon" style="font-size: 2rem;">⚡</div>
-            <div class="award-info">
-                <h3 style="color: var(--blue);">Agent of the Day</h3>
-                <p id="top-agent-day">...</p>
-            </div>
-        </div>
-    </div>
-
     <div class="stats-bar">
-        <div class="stat-card"><span class="stat-label">Total</span><span id="center-total" class="stat-number" style="color:var(--blue)">0</span></div>
-        <div class="stat-card"><span class="stat-label">Approved</span><span id="center-approved" class="stat-number" style="color:var(--green)">0</span></div>
-        <div class="stat-card"><span class="stat-label">Pending</span><span id="center-pending" class="stat-number" style="color:var(--yellow)">0</span></div>
-        <div class="stat-card"><span class="stat-label">Rejected</span><span id="center-unapproved" class="stat-number" style="color:var(--red)">0</span></div>
-        <div class="stat-card" style="grid-column: span 2; @media (min-width: 900px) { grid-column: span 1; }">
-            <span class="stat-label">Payroll</span><span id="center-payroll" class="stat-number" style="color:var(--green)">Rs 0</span>
-        </div>
+        <div class="stat-card"><span class="stat-label">Total Leads</span><span id="c-total" class="stat-number" style="color:var(--blue)">0</span></div>
+        <div class="stat-card"><span class="stat-label">Approved</span><span id="c-app" class="stat-number" style="color:var(--green)">0</span></div>
+        <div class="stat-card"><span class="stat-label">Pending</span><span id="c-pend" class="stat-number" style="color:var(--yellow)">0</span></div>
+        <div class="stat-card"><span class="stat-label">Rejected</span><span id="c-rej" class="stat-number" style="color:var(--red)">0</span></div>
+        <div class="stat-card"><span class="stat-label">Expected Payroll</span><span id="c-pay" class="stat-number" style="color:var(--green)">Rs 0</span></div>
     </div>
 
     <div class="table-wrapper">
@@ -120,10 +78,9 @@
                 <tr>
                     <th>Rank</th>
                     <th class="agent-name">Agent Name</th>
-                    <th>Total</th>
-                    <th>App</th>
-                    <th>Salary</th>
-                    <th>Status</th>
+                    <th>Leads</th>
+                    <th>Approved</th>
+                    <th>Performance Salary</th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body"></tbody>
@@ -134,84 +91,92 @@
 <script>
     const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNUob6RgZZc4RWJfazbmerMCwcsZtJYulHpZk1FQPMm9rrnUKmTsTLzsXLaRGuEkDq_fuqIDGcAGAj/pub?output=csv";
 
-    function calculateSalary(appCount) {
-        if (appCount === 0) return 0;
-        return (appCount < 30) ? (appCount * 800) : (25000 + ((appCount - 30) * 500));
+    function handleTimeframeChange() {
+        const val = document.getElementById('timeframe').value;
+        document.getElementById('custom-inputs').style.display = (val === 'custom') ? 'flex' : 'none';
+        updateDashboard();
     }
 
-    async function fetchData() {
-        try {
-            const response = await fetch(csvUrl);
-            const data = await response.text();
-            const rows = data.split('\n').slice(1);
-            
-            const agents = {};
-            const dailyCounts = {}; // For Agent of the Day
-            let gTotal = 0, gApp = 0, gPend = 0, gRej = 0, gPayroll = 0;
+    function getDateRange(filter) {
+        let start = new Date(), end = new Date();
+        start.setHours(0,0,0,0); end.setHours(23,59,59,999);
 
-            const today = new Date().toLocaleDateString(); // Matches standard date format
+        if (filter === 'yesterday') {
+            start.setDate(start.getDate() - 1);
+            end.setDate(end.getDate() - 1);
+        } else if (filter === 'this-week') {
+            start.setDate(start.getDate() - start.getDay());
+        } else if (filter === 'last-week') {
+            start.setDate(start.getDate() - start.getDay() - 7);
+            end.setDate(start.getDate() + 6);
+        } else if (filter === 'this-month') {
+            start.setDate(1);
+        } else if (filter === 'last-month') {
+            start.setMonth(start.getMonth() - 1);
+            start.setDate(1);
+            end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
+        } else if (filter === 'custom') {
+            start = new Date(document.getElementById('start-date').value || 0);
+            end = new Date(document.getElementById('end-date').value || Date.now());
+            end.setHours(23,59,59);
+        }
+        return { start, end };
+    }
+
+    function calculateSalary(app) {
+        if (app === 0) return 0;
+        return (app < 30) ? (app * 800) : (25000 + ((app - 30) * 500));
+    }
+
+    async function updateDashboard() {
+        try {
+            const res = await fetch(csvUrl);
+            const data = await res.text();
+            const rows = data.split('\n').slice(1);
+            const filter = document.getElementById('timeframe').value;
+            const { start, end } = getDateRange(filter);
+
+            const agents = {};
+            let tTotal = 0, tApp = 0, tPend = 0, tRej = 0, tPay = 0;
 
             rows.forEach(row => {
                 const col = row.split(/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/);
                 if (col.length < 4) return;
 
-                let name = col[0].replace(/\"/g, "").trim().toUpperCase();
-                let status = col[2].replace(/\"/g, "").trim().toLowerCase();
-                let leadDate = col[3].replace(/\"/g, "").trim(); // COLUMN D
+                const date = new Date(col[3].replace(/\"/g, "").trim());
+                if (date < start || date > end) return;
+
+                const name = col[0].replace(/\"/g, "").trim().toUpperCase();
+                const status = col[2].replace(/\"/g, "").trim().toLowerCase();
 
                 if (!agents[name]) agents[name] = { name, total: 0, app: 0, pend: 0, rej: 0 };
-                if (!dailyCounts[name]) dailyCounts[name] = 0;
-
-                // Overall Stats
+                
                 agents[name].total++;
-                gTotal++;
-                if (status === 'approved') { agents[name].app++; gApp++; }
-                else if (status === 'pending') { agents[name].pend++; gPend++; }
-                else { agents[name].rej++; gRej++; }
-
-                // Check for Agent of the Day (Only if date matches today)
-                if (leadDate === today) {
-                    dailyCounts[name]++;
-                }
+                tTotal++;
+                if (status === 'approved') { agents[name].app++; tApp++; }
+                else if (status === 'pending') { agents[name].pend++; tPend++; }
+                else { agents[name].rej++; tRej++; }
             });
 
             const sorted = Object.values(agents).sort((a, b) => b.app - a.app);
-            const dayWinner = Object.entries(dailyCounts).sort((a, b) => b[1] - a[1])[0];
-
-            document.getElementById('top-agent-month').innerText = sorted[0]?.name || "None";
-            document.getElementById('top-agent-day').innerText = (dayWinner && dayWinner[1] > 0) ? dayWinner[0] : "Starting...";
-
             let html = '';
             sorted.forEach((agent, i) => {
                 const salary = calculateSalary(agent.app);
-                gPayroll += salary;
-                let targetInfo = agent.app < 30 
-                    ? `<span class="target-needed">${30 - agent.app} more to hit 25k</span>`
-                    : `<span class="target-needed" style="color:var(--blue)">+500 PKR / lead</span>`;
-
-                html += `
-                    <tr class="row-item">
-                        <td>${i + 1}</td>
-                        <td class="agent-name">${agent.name} ${i === 0 ? '👑' : ''}</td>
-                        <td>${agent.total}</td>
-                        <td style="color:var(--green)">${agent.app}</td>
-                        <td class="salary-highlight">Rs ${salary.toLocaleString()}${targetInfo}</td>
-                        <td><span class="badge bg-app">${agent.app} APP</span></td>
-                    </tr>`;
+                tPay += salary;
+                html += `<tr><td>${i+1}</td><td class="agent-name">${agent.name}</td><td>${agent.total}</td><td style="color:var(--green)">${agent.app}</td><td class="salary">Rs ${salary.toLocaleString()}</td></tr>`;
             });
 
             document.getElementById('leaderboard-body').innerHTML = html;
-            document.getElementById('center-total').innerText = gTotal;
-            document.getElementById('center-approved').innerText = gApp;
-            document.getElementById('center-pending').innerText = gPend;
-            document.getElementById('center-unapproved').innerText = gRej;
-            document.getElementById('center-payroll').innerText = "Rs " + gPayroll.toLocaleString();
-
-        } catch (e) { console.error("Update failed", e); }
+            document.getElementById('c-total').innerText = tTotal;
+            document.getElementById('c-app').innerText = tApp;
+            document.getElementById('c-pend').innerText = tPend;
+            document.getElementById('c-rej').innerText = tRej;
+            document.getElementById('c-pay').innerText = "Rs " + tPay.toLocaleString();
+        } catch (e) { console.log(e); }
     }
 
-    fetchData();
-    setInterval(fetchData, 15000);
+    updateDashboard();
+    setInterval(() => { if(document.getElementById('timeframe').value !== 'custom') updateDashboard(); }, 30000);
 </script>
 </body>
 </html>
