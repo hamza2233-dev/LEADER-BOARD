@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alixo BPO | Monthly Performance</title>
+    <title>Alixo BPO | Performance & Payroll</title>
     <style>
         :root {
             --bg-dark: #0d1117;
@@ -12,52 +12,40 @@
             --blue: #58a6ff;
             --green: #3fb950;
             --red: #f85149;
+            --yellow: #d29922;
             --purple: #bc8cff;
             --text-main: #c9d1d9;
         }
 
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg-dark); 
-            color: var(--text-main); 
-            margin: 0; padding: 20px;
-        }
-
-        .container { 
-            width: 100%; max-width: 1100px; margin: auto; 
-            background: var(--card-bg); border: 1px solid var(--border); 
-            border-radius: 16px; padding: 30px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); 
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-dark); color: var(--text-main); margin: 0; padding: 20px; }
+        .container { width: 100%; max-width: 1300px; margin: auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); }
         header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
         .company-name { color: var(--blue); font-size: 2.5rem; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 3px; }
         .dashboard-title { color: #8b949e; font-size: 1.1rem; margin-top: 5px; }
 
         /* Stats Bar */
-        .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: rgba(48, 54, 61, 0.3); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
-        .stat-number { font-size: 1.8rem; font-weight: bold; display: block; }
-        .total-leads { color: var(--blue); }
-        .total-app { color: var(--green); }
-        .total-unapp { color: var(--red); }
-        .total-avg { color: var(--purple); }
-
+        .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 30px; }
+        .stat-card { background: rgba(48, 54, 61, 0.3); padding: 12px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
+        .stat-number { font-size: 1.5rem; font-weight: bold; display: block; margin-top: 5px; }
+        
         /* Table */
-        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        th { padding: 15px; color: #8b949e; text-transform: uppercase; font-size: 0.85rem; }
-        td { padding: 18px; text-align: center; font-size: 1.1rem; font-weight: 600; }
-        .row-item { background: rgba(255,255,255,0.03); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        th { padding: 15px; color: #8b949e; text-transform: uppercase; font-size: 0.75rem; text-align: center; }
+        td { padding: 15px; text-align: center; font-size: 1.05rem; font-weight: 600; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .row-item { background: rgba(255,255,255,0.02); }
         
-        .rank-box { background: #30363d; color: white; width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; }
-        .agent-name { text-align: left; padding-left: 20px; color: #ffffff; }
+        .agent-name { text-align: left; padding-left: 20px; color: #ffffff; border-left: 1px solid var(--border); border-radius: 8px 0 0 8px; }
+        .last-col { border-radius: 0 8px 8px 0; border-right: 1px solid var(--border); }
 
-        .badge { padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; margin: 0 2px; }
-        .bg-app { background: rgba(46, 160, 67, 0.2); color: var(--green); border: 1px solid var(--green); }
-        .bg-unapp { background: rgba(248, 81, 73, 0.2); color: var(--red); border: 1px solid var(--red); }
+        .badge { padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin: 2px; border: 1px solid transparent; }
+        .bg-app { background: rgba(46, 160, 67, 0.15); color: var(--green); border-color: var(--green); }
+        .bg-pend { background: rgba(210, 153, 34, 0.15); color: var(--yellow); border-color: var(--yellow); }
+        .bg-unapp { background: rgba(248, 81, 73, 0.15); color: var(--red); border-color: var(--red); }
         
-        .avg-highlight { color: var(--purple); font-weight: 800; font-size: 1.3rem; }
+        .salary-highlight { color: var(--green); font-size: 1.2rem; font-family: 'Courier New', monospace; }
+        .avg-highlight { color: var(--purple); }
 
-        @media (max-width: 800px) { .stats-bar { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 1000px) { .stats-bar { grid-template-columns: repeat(3, 1fr); } }
     </style>
 </head>
 <body>
@@ -65,26 +53,15 @@
 <div class="container">
     <header>
         <h1 class="company-name">Alixo BPO</h1>
-        <div id="month-label" class="dashboard-title">Monthly Performance Monitor</div>
+        <div id="date-info" class="dashboard-title">Performance & Payroll Monitor</div>
     </header>
 
     <div class="stats-bar">
-        <div class="stat-card">
-            <span class="dashboard-title">MTD TOTAL</span>
-            <span id="center-total" class="stat-number total-leads">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="dashboard-title">APPROVED</span>
-            <span id="center-approved" class="stat-number total-app">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="dashboard-title">UN-APPROVED</span>
-            <span id="center-unapproved" class="stat-number total-unapp">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="dashboard-title">DAILY AVG (MTD)</span>
-            <span id="center-avg" class="stat-number total-avg">0</span>
-        </div>
+        <div class="stat-card"><span class="dashboard-title">TOTAL</span><span id="center-total" class="stat-number" style="color:var(--blue)">0</span></div>
+        <div class="stat-card"><span class="dashboard-title">APPROVED</span><span id="center-approved" class="stat-number" style="color:var(--green)">0</span></div>
+        <div class="stat-card"><span class="dashboard-title">PENDING</span><span id="center-pending" class="stat-number" style="color:var(--yellow)">0</span></div>
+        <div class="stat-card"><span class="dashboard-title">REJECTED</span><span id="center-unapproved" class="stat-number" style="color:var(--red)">0</span></div>
+        <div class="stat-card"><span class="dashboard-title">MTD PAYROLL</span><span id="center-payroll" class="stat-number" style="color:var(--green)">Rs 0</span></div>
     </div>
 
     <table>
@@ -92,9 +69,10 @@
             <tr>
                 <th>Rank</th>
                 <th class="agent-name">Agent Name</th>
-                <th>Total Leads</th>
+                <th>Approved</th>
                 <th>Daily Avg</th>
-                <th>Quality Status</th>
+                <th>Expected Salary</th>
+                <th class="last-col">Status Breakdown</th>
             </tr>
         </thead>
         <tbody id="leaderboard-body"></tbody>
@@ -103,12 +81,34 @@
 
 <script>
     const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNUob6RgZZc4RWJfazbmerMCwcsZtJYulHpZk1FQPMm9rrnUKmTsTLzsXLaRGuEkDq_fuqIDGcAGAj/pub?output=csv";
-    
-    // Auto-detect days passed in current month
+
+    function getWorkingDaysPassed() {
+        let count = 0;
+        let curDate = new Date();
+        let tempDate = new Date(curDate.getFullYear(), curDate.getMonth(), 1);
+        while (tempDate <= curDate) {
+            const dayOfWeek = tempDate.getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+        return count > 0 ? count : 1; 
+    }
+
+    function calculateSalary(approvedLeads) {
+        if (approvedLeads === 0) return 0;
+        if (approvedLeads < 30) {
+            return approvedLeads * 800;
+        } else {
+            let base = 25000;
+            let extraLeads = approvedLeads - 30;
+            let increments = Math.floor(extraLeads / 10);
+            return base + (increments * 5000);
+        }
+    }
+
+    const workDays = getWorkingDaysPassed();
     const today = new Date();
-    const daysPassed = today.getDate(); 
-    const monthName = today.toLocaleString('default', { month: 'long' });
-    document.getElementById('month-label').innerText = `${monthName} Performance Dashboard (Day ${daysPassed})`;
+    document.getElementById('date-info').innerText = `${today.toLocaleString('default', { month: 'long' })} | ${workDays} Working Days Tracked`;
 
     async function refreshLeaderboard() {
         try {
@@ -118,51 +118,50 @@
             const dataRows = lines.slice(1);
 
             const agentData = {};
-            let globalTotal = 0;
-            let globalApp = 0;
+            let gTotal = 0, gApp = 0, gPend = 0, gUnapp = 0, totalPayroll = 0;
 
             dataRows.forEach(row => {
                 const parts = row.split(/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/);
                 let name = (parts[0] || "Unknown").replace(/\"/g, "").trim().toUpperCase();
                 let status = (parts[2] || "Not Approved").replace(/\"/g, "").trim().toLowerCase();
 
-                if (!agentData[name]) {
-                    agentData[name] = { name: name, total: 0, app: 0, unapp: 0 };
-                }
-
+                if (!agentData[name]) agentData[name] = { name, total: 0, app: 0, pend: 0, unapp: 0 };
                 agentData[name].total++;
-                globalTotal++;
-                if (status === 'approved') { globalApp++; agentData[name].app++; }
-                else { agentData[name].unapp++; }
+                gTotal++;
+
+                if (status === 'approved') { agentData[name].app++; gApp++; }
+                else if (status === 'pending') { agentData[name].pend++; gPend++; }
+                else { agentData[name].unapp++; gUnapp++; }
             });
 
-            // Global Monthly Daily Average
-            const globalDailyAvg = (globalTotal / daysPassed).toFixed(2);
-            document.getElementById('center-total').innerText = globalTotal;
-            document.getElementById('center-approved').innerText = globalApp;
-            document.getElementById('center-unapproved').innerText = (globalTotal - globalApp);
-            document.getElementById('center-avg').innerText = globalDailyAvg;
-
-            const sortedAgents = Object.values(agentData).sort((a, b) => b.total - a.total);
+            const sortedAgents = Object.values(agentData).sort((a, b) => b.app - a.app); // Rank by Approved Leads
 
             let tableContent = '';
             sortedAgents.forEach((agent, index) => {
-                // Individual Daily Average for the month
-                const agentDailyAvg = (agent.total / daysPassed).toFixed(2);
+                const avg = (agent.total / workDays).toFixed(2);
+                const salary = calculateSalary(agent.app);
+                totalPayroll += salary;
 
                 tableContent += `
                     <tr class="row-item">
-                        <td><div class="rank-box">${index + 1}</div></td>
+                        <td>${index + 1}</td>
                         <td class="agent-name">${agent.name}</td>
-                        <td>${agent.total}</td>
-                        <td class="avg-highlight">${agentDailyAvg}</td>
-                        <td>
+                        <td>${agent.app}</td>
+                        <td class="avg-highlight">${avg}</td>
+                        <td class="salary-highlight">Rs ${salary.toLocaleString()}</td>
+                        <td class="last-col">
                             <span class="badge bg-app">${agent.app} APP</span>
-                            <span class="badge bg-unapp">${agent.unapp} UN-APP</span>
+                            <span class="badge bg-pend">${agent.pend} PND</span>
+                            <span class="badge bg-unapp">${agent.unapp} REJ</span>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
+
+            document.getElementById('center-total').innerText = gTotal;
+            document.getElementById('center-approved').innerText = gApp;
+            document.getElementById('center-pending').innerText = gPend;
+            document.getElementById('center-unapproved').innerText = gUnapp;
+            document.getElementById('center-payroll').innerText = "Rs " + totalPayroll.toLocaleString();
             document.getElementById('leaderboard-body').innerHTML = tableContent;
         } catch (err) { console.error(err); }
     }
@@ -170,6 +169,5 @@
     refreshLeaderboard();
     setInterval(refreshLeaderboard, 15000);
 </script>
-
 </body>
 </html>
